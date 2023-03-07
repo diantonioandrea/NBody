@@ -9,6 +9,9 @@
 		"description": "Sets the value for a setting.",
 		"options": {"-t": "THEME:light/dark"}
 	},
+	"delete": {
+		"description": "Deletes the user's profile."
+	},
 	"new": {
 		"description": "Creates a new body."
 	},

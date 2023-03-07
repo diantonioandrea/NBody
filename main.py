@@ -1,6 +1,20 @@
-import CLIbrary, os, platform, sys, shutil
+import CLIbrary, os, random, platform, sys, shutil, requests, zipfile
 from colorama import Fore, Back, Style
 import NBody
+
+# ---
+# From an answer of Ciro Santilli on https://stackoverflow.com/questions/12791997/how-do-you-do-a-simple-chmod-x-from-within-python
+import stat
+
+def get_umask():
+    umask = os.umask(0)
+    os.umask(umask)
+
+    return umask
+
+def executable(filePath):
+    os.chmod(filePath, os.stat(filePath).st_mode | ((stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH) & ~get_umask()))
+# ---
 
 version = "1.0.0"
 production = True
@@ -20,7 +34,14 @@ if production: # Production.
 	homePath = os.path.expanduser("~") + "/"
 	installPath = homePath
 	
-	installPath += "Library/NBody/"
+	if system == "Darwin":
+		installPath += "Library/NBody/"
+	
+	elif system == "Linux":
+		installPath += ".local/bin/NBody/"
+
+	elif system == "Windows":
+		installPath += "AppData/Roaming/NBody/"
 
 	dataPath = installPath + "data/"
 	resourcesPath = installPath + "resources/"
@@ -46,7 +67,11 @@ if "install" in sys.argv and production:
 		for file in os.listdir(currentPath + "resources/"):
 			shutil.copy(currentPath + "resources/" + file, resourcesPath + file)
 
-		shutil.copy(currentPath + "NBody", installPath + "NBody")
+		if system != "Windows":
+			shutil.copy(currentPath + "NBody", installPath + "NBody")
+
+		else:
+			shutil.copy(currentPath + "NBody.exe", installPath + "NBody.exe")
 
 		CLIbrary.output({"type": "verbose", "string": "NBODY INSTALLED SUCCESFULLY TO " + installPath, "before": "\n"})
 
@@ -62,6 +87,63 @@ if "install" in sys.argv and production:
 
 	finally:
 		sys.exit(0)
+
+# UPDATE
+
+if production:
+	updateFlag = False
+
+	try:
+		latestVersion = requests.get("https://github.com/diantonioandrea/NBody/releases/latest").url.split("/")[-1]
+
+		if  version < latestVersion or (latestVersion in version and "_dev" in version):
+			CLIbrary.output({"type": "verbose", "string": "UPDATE AVAILABLE: " + version + " \u2192 " + latestVersion, "before": "\n"})
+
+			if CLIbrary.boolIn({"request": "Would you like to download the latest version?"}):
+				tempPath = installPath + "temp/"
+
+				if not os.path.exists(tempPath):
+					os.makedirs(tempPath)
+
+				filePath = tempPath + "NBody-SYSTEM.zip".replace("SYSTEM", system.lower())
+				url = "https://github.com/diantonioandrea/NBody/releases/download/" + latestVersion + "/NBody-SYSTEM.zip".replace("SYSTEM", system.lower())
+
+				file = open(filePath, "wb")
+				file.write(requests.get(url).content)
+				file.close()
+
+				updatePackage = zipfile.ZipFile(filePath, "r")
+				updatePackage.extractall(tempPath)
+
+				for file in os.listdir(tempPath + "resources/"):
+					shutil.copy(tempPath + "resources/" + file, resourcesPath + file)
+
+				if system != "Windows":
+					shutil.copy(tempPath + "NBody", installPath + "NBody")
+					executable(installPath + "NBody")
+
+				else:
+					shutil.copy(tempPath + "NBody.exe", installPath + "NBody.exe")
+					executable(installPath + "NBody.exe")
+
+				updateFlag = True
+				shutil.rmtree(tempPath)
+				CLIbrary.output({"type": "verbose", "string": "UPDATED TO: " + latestVersion})
+			
+			else:
+				CLIbrary.output({"type": "verbose", "string": "UPDATE IGNORED"})
+
+	except(requests.exceptions.RequestException):
+		CLIbrary.output({"type": "error", "string": "COULDN'T CHECK FOR UPDATES", "before": "\n"})
+
+	except:
+		CLIbrary.output({"type": "error", "string": "UPDATE MAY HAVE FAILED", "before": "\n", "after": "\n"})
+		sys.exit(-1)
+
+	finally:
+		if updateFlag:
+			CLIbrary.output({"type": "verbose", "string": "THE PROGRAM HAS BEEN CLOSED TO COMPLETE THE UPDATE", "after": "\n"})
+			sys.exit(0)
 
 # CHECKS
 
@@ -144,7 +226,7 @@ bodies = user.bodies
 # Prompt.
 cmdHandler = {"request": "[" + str(user) + "@nbody]"}
 cmdHandler["style"] = Fore.YELLOW
-cmdHandler["allowedCommands"] = ["new", "set", "password"]
+cmdHandler["allowedCommands"] = ["new", "set", "password", "delete"]
 
 cmdHandler["helpPath"] = "resources/NBodyHelp.json"
 
@@ -207,6 +289,20 @@ while True:
 
 		user.register()
 		CLIbrary.output({"type": "verbose", "string": "PASSWORD SET"})
+
+	# DELETE
+		
+	elif cmd == "delete": # Deletes the profile.
+		deletionCode = str(random.randint(10**3, 10**4-1))
+
+		if CLIbrary.strIn({"request": "Given that this action is irreversible, insert \"" + deletionCode + "\" to delete your profile"}) == deletionCode:
+			os.remove(dataPath + user.name + ".obc")
+
+			CLIbrary.output({"type": "verbose", "string": "PROFILE DELETED"})
+			break
+
+		CLIbrary.output({"type": "error", "string": "WRONG VERIFICATION CODE"})
+		continue
 
 	# NEW
 
