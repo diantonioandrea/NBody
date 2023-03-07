@@ -30,6 +30,7 @@
 		"options": {"-n#": "STEPS_NUMBER", "-t#": "STEP_SIZE"}
 	},
 	"plot": {
-		"description": "Plots the trajectories."
+		"description": "Plots the trajectories.",
+		"options": {"--animated": ""}
 	}
 }
