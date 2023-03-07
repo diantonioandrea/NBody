@@ -16,7 +16,7 @@ def executable(filePath):
     os.chmod(filePath, os.stat(filePath).st_mode | ((stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH) & ~get_umask()))
 # ---
 
-version = "1.0.0"
+version = "v1.0.0"
 production = True
 if "NBody" not in "".join(sys.argv): # Local testing.
 	production = False
