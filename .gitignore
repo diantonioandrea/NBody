@@ -1,0 +1,19 @@
+# NBody
+
+data
+
+# MAKE COMPILE AND WINDOWS
+
+build
+dist
+*.spec
+release
+
+NBody
+
+# OTHERS
+
+.vscode
+
+**/__pycache__
+**/.DS_Store
