@@ -149,7 +149,6 @@ if production:
 
 try:
 	# Folders.
-
 	if not os.path.exists(dataPath):
 		os.makedirs(dataPath)
 
@@ -157,7 +156,6 @@ try:
 		raise(FileNotFoundError)
 
 	# Resources
-
 	resources = [helpPath]
 	
 	for resource in resources:

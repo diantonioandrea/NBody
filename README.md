@@ -17,6 +17,10 @@ There are some Python modules that need to be installed in order to compile and 
 	* matplotlib: plotting.
 	* numpy: calculations.
 
+As a one-liner:
+
+	python3 -m pip install CLIbrary bcrypt requests matplotlib numpy
+
 ### Compiling and installing from source
 
 **NBody** can be compiled by:
