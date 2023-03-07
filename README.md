@@ -19,7 +19,7 @@ There are some Python modules that need to be installed in order to compile and 
 
 As a one-liner:
 
-	python3 -m pip install CLIbrary bcrypt requests matplotlib numpy
+	python3 -m pip install pyinstaller CLIbrary bcrypt requests matplotlib numpy
 
 ### Compiling and installing from source
 
