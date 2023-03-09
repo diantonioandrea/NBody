@@ -43,16 +43,11 @@ if production: # Production.
 	elif system == "Windows":
 		installPath += "AppData/Roaming/NBody/"
 
-	dataPath = installPath + "data/"
-	resourcesPath = installPath + "resources/"
-
 else: # Testing.
 	installPath = str(os.getcwd()) + "/"
 
-	dataPath = installPath + "data/"
-	reportsPath = installPath + "reports/"
-	resourcesPath = installPath + "resources/"
-
+dataPath = installPath + "data/"
+resourcesPath = installPath + "resources/"
 helpPath = resourcesPath + "NBodyHelp.json"
 
 # INSTALLATION
@@ -222,7 +217,7 @@ print("Type \'help\' if needed\n")
 # Prompt.
 cmdHandler = {"request": "[" + str(user) + "@nbody]"}
 cmdHandler["style"] = Fore.YELLOW
-cmdHandler["helpPath"] = "resources/NBodyHelp.json"
+cmdHandler["helpPath"] = helpPath
 
 while True:
 	bodies = user.bodies
