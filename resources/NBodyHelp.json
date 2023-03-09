@@ -15,15 +15,19 @@
 	"new": {
 		"description": "Creates a new body."
 	},
+	"info": {
+		"description": "Shows the list of bodies.",
+		"options": {"--all": ""}
+	},
+	"remove": {
+		"description": "Removes a body by its name.",
+		"options": {"-n#": "BODY_NAME"}
+	},
 	"clear": {
 		"description": "Clears the list of bodies."
 	},
 	"reset": {
-		"description": "Reset bodies' trajectories."
-	},
-	"info": {
-		"description": "Shows the list of bodies.",
-		"options": {"--all": ""}
+		"description": "Resets bodies' trajectories."
 	},
 	"simulate": {
 		"description": "Enters the specified account environment.",

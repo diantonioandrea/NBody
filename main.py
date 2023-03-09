@@ -16,7 +16,7 @@ def executable(filePath):
     os.chmod(filePath, os.stat(filePath).st_mode | ((stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH) & ~get_umask()))
 # ---
 
-version = "v1.0.0"
+version = "v1.1.0_dev"
 production = True
 if "NBody" not in "".join(sys.argv): # Local testing.
 	production = False
@@ -219,23 +219,22 @@ while True:
 
 print("Type \'help\' if needed\n")
 
-bodies = user.bodies
-
 # Prompt.
 cmdHandler = {"request": "[" + str(user) + "@nbody]"}
 cmdHandler["style"] = Fore.YELLOW
-cmdHandler["allowedCommands"] = ["new", "set", "password", "delete"]
-
 cmdHandler["helpPath"] = "resources/NBodyHelp.json"
 
 while True:
+	bodies = user.bodies
 	bodies.sort(key = lambda entry: entry.mass, reverse=True)
 
 	fileHandler["data"] = user
 	CLIbrary.aDump(fileHandler)
 
+	cmdHandler["allowedCommands"] = ["new", "set", "password", "delete"]
+
 	if len(bodies):
-		cmdHandler["allowedCommands"] += ["info", "clear", "reset", "plot"]
+		cmdHandler["allowedCommands"] += ["info", "clear", "reset", "remove", "plot"]
 
 		if len(bodies) > 1:
 			cmdHandler["allowedCommands"] += ["simulate"]
@@ -294,7 +293,7 @@ while True:
 		deletionCode = str(random.randint(10**3, 10**4-1))
 
 		if CLIbrary.strIn({"request": "Given that this action is irreversible, insert \"" + deletionCode + "\" to delete your profile"}) == deletionCode:
-			os.remove(dataPath + user.name + ".obc")
+			os.remove(dataPath + user.name + ".nb")
 
 			CLIbrary.output({"type": "verbose", "string": "PROFILE DELETED"})
 			break
@@ -321,8 +320,7 @@ while True:
 
 	elif cmd == "clear": # Clears the bodies list.
 		if CLIbrary.boolIn({"request": "Clear all bodies?"}):
-			user.bodies = [] # Don't know why it needs both.
-			bodies = []
+			user.bodies = []
 			CLIbrary.output({"type": "verbose", "string": "BODIES CLEARED", "before": "\n"})
 
 	# RESET
@@ -332,16 +330,30 @@ while True:
 			for body in user.bodies:
 				body.reset()
 
-			for body in bodies:
-				body.reset()
-
 			CLIbrary.output({"type": "verbose", "string": "BODIES RESET", "before": "\n"})
+
+	# REMOVE
+
+	elif cmd == "remove": # Removes a body by its name.
+		if "n" not in sdOpts:
+			CLIbrary.output({"type": "error", "string": "MISSING OPTION"})
+			continue
+
+		targetBody = [body for body in bodies if body.name.lower() == sdOpts["n"]]
+
+		if len(targetBody):
+			targetBody = targetBody.pop()
+			user.bodies.remove(targetBody)
+			CLIbrary.output({"type": "verbose", "string": "BODY REMOVED"})
+
+		else:
+			CLIbrary.output({"type": "error", "string": "BODY NOT FOUND"})
 
 	# SIMULATION
 	
 	elif cmd == "simulate": # Starts a simulation.
 		if "n" not in sdOpts or "t" not in sdOpts:
-			CLIbrary.output({"type": "error", "string": "MISSING OPTION"})
+			CLIbrary.output({"type": "error", "string": "MISSING OPTION(S)"})
 			continue
 		
 		try:

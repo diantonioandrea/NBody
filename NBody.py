@@ -9,7 +9,7 @@ from datetime import datetime
 
 class user:
 	def __init__(self):
-		self.name = CLIbrary.strIn({"request": "\nUser", "noSpace": True})
+		self.name = CLIbrary.strIn({"request": "\nUser", "noSpace": True, "blockedAnswers": [""]})
 
 		self.registrationDate = datetime.now()
 		self.lastLogin = self.registrationDate
@@ -45,7 +45,7 @@ def getPosition(position: numpy.array) -> list: # Needed due to Python's refere
 class body:
 	def __init__(self, others: list):
 		while True:
-			self.name = CLIbrary.strIn({"request": "Body's name", "noSpace": True})
+			self.name = CLIbrary.strIn({"request": "Body's name", "noSpace": True, "blockedAnswers": [""]})
 			self.name = self.name[0].upper() + self.name[1:]
 
 			if self.name not in [other.name for other in others]:
@@ -176,7 +176,9 @@ def plotTrajectories(bodies: list) -> None:
 		colour = [random.randint(0, 128) / 256 for _ in range(3)]
 
 		ax.plot(x, y, z, color=colour)
-		ax.scatter(x[-1], y[-1], z[-1], marker="o", color=colour, label=bodies[trajectories.index(trajectory)].name)
+
+		if len(trajectory) > 1:
+			ax.scatter(x[-1], y[-1], z[-1], marker="o" if not bodies[trajectories.index(trajectory)].inactive else ".", color=colour, label=bodies[trajectories.index(trajectory)].name)
 	
 	ax.legend()
 	plt.show()
@@ -212,7 +214,7 @@ def animateTrajectories(bodies: list) -> None:
 	labels = [body.name for body in bodies]
 	
 	trajectories = [ax.plot([], [], [], color=colours[index])[0] for index in range(len(rawTrajectories))]
-	dots = [ax.scatter([], [], [], label=labels[index], color=colours[index], marker="o") for index in range(len(rawTrajectories))]
+	dots = [ax.scatter([], [], [], label=labels[index], color=colours[index], marker="o" if not bodies[index].inactive else ".") for index in range(len(rawTrajectories))]
 
 	ani = animation.FuncAnimation(fig, updateTrajectories, len(rawTrajectories[0]), fargs=(rawTrajectories, trajectories, dots), interval=24, repeat=False)
 
