@@ -1,17 +1,17 @@
 darwin: # macOS release
-	pyinstaller --onefile --console main.py
+	pyinstaller --onefile --console src/main.py
 	mv dist/main NBody
 	mkdir -p release
 	zip -r "release/NBody-darwin.zip" NBody resources/
 
 linux: # Linux release
-	pyinstaller --onefile --console main.py
+	pyinstaller --onefile --console src/main.py
 	mv dist/main NBody
 	mkdir -p release
 	zip -r "release/NBody-linux.zip" NBody resources/
 
 windows: # Windows release
-	pyinstaller --onefile --console main.py
+	pyinstaller --onefile --console .\src\main.py
 	move .\dist\main.exe .\NBody.exe
 	if exist .\release rd /s /q .\release
 	mkdir release
