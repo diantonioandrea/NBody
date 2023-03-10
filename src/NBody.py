@@ -9,7 +9,7 @@ from datetime import datetime
 
 class user:
 	def __init__(self):
-		self.name = CLIbrary.strIn({"request": "\nUser", "noSpace": True, "blockedAnswers": [""]})
+		self.name = CLIbrary.strIn({"request": "\nUser", "space": False, "blockedAnswers": [""]})
 
 		self.registrationDate = datetime.now()
 		self.lastLogin = self.registrationDate
@@ -25,13 +25,13 @@ class user:
 		return self.name
 
 	def login(self, passwordHash):
-		password = CLIbrary.strIn({"request": "Password", "noSpace": True, "fixedLength": 8})
+		password = CLIbrary.strIn({"request": "Password", "space": False, "fixedLength": 8})
 		self.passwordHash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
 		return bcrypt.checkpw(password.encode(), passwordHash)
 
 	def register(self):
-		self.passwordHash = bcrypt.hashpw(CLIbrary.strIn({"request": "Password", "noSpace": True, "verification": True, "fixedLength": 8}).encode(), bcrypt.gensalt())
+		self.passwordHash = bcrypt.hashpw(CLIbrary.strIn({"request": "Password", "space": False, "verification": True, "fixedLength": 8}).encode(), bcrypt.gensalt())
 		self.protected = True
 
 # BODIES
@@ -45,7 +45,7 @@ def getPosition(position: numpy.array) -> list: # Needed due to Python's refere
 class body:
 	def __init__(self, others: list):
 		while True:
-			self.name = CLIbrary.strIn({"request": "Body's name", "noSpace": True, "blockedAnswers": [""]})
+			self.name = CLIbrary.strIn({"request": "Body's name", "space": False, "blockedAnswers": [""]})
 			self.name = self.name[0].upper() + self.name[1:]
 
 			if self.name not in [other.name for other in others]:

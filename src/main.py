@@ -362,6 +362,10 @@ while True:
 	# PLOTTING
 	
 	elif cmd == "plot": # Plots the computed trajectories.
+		if max([len(body.history) for body in bodies]) < 2 and min([len(body.history) for body in bodies]) < 2:
+			CLIbrary.output({"type": "error", "string": "NOT ENOUGH POINTS"})
+			continue
+
 		if "animated" not in ddOpts:
 			NBody.plotTrajectories(bodies)
 
