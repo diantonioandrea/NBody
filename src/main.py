@@ -194,13 +194,9 @@ while True:
 		user.registrationDate = userData.registrationDate
 		user.bodies = userData.bodies
 
-		try:
-			if userData.darkTheme:
-				CLIbrary.style.setting_darkMode = True
-				user.darkTheme = userData.darkTheme
-		
-		except:
-			user.darkTheme = False
+		if userData.darkTheme:
+			CLIbrary.style.setting_darkMode = True
+			user.darkTheme = True
 
 		print("\nWelcome back, " + str(user) + "\nLast login: " + userData.lastLogin.strftime("%A, %B %d, %Y at %H:%M"))
 		break
@@ -224,7 +220,7 @@ cmdHandler["helpPath"] = helpPath
 
 while True:
 	bodies = user.bodies
-	bodies.sort(key = lambda entry: entry.mass, reverse=True)
+	bodies.sort(key = lambda entry: entry.mass * entry.radius, reverse=True)
 
 	fileHandler["data"] = user
 	CLIbrary.aDump(fileHandler)
