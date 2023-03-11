@@ -44,15 +44,8 @@ def getPosition(position: numpy.array) -> list: # Needed due to Python's refere
 
 class body:
 	def __init__(self, others: list):
-		while True:
-			self.name = CLIbrary.strIn({"request": "Body's name", "space": False})
-			self.name = self.name[0].upper() + self.name[1:]
-
-			if self.name not in [other.name for other in others]:
-				break
-
-			else:
-				CLIbrary.output({"type": "error", "string": "NAME UNAVAILABLE"})
+		self.name = CLIbrary.strIn({"request": "Body's name", "space": False, "blockedAnswers": [other.name.lower() for other in others]})
+		self.name = self.name[0].upper() + self.name[1:]
 
 		while True:
 			self.mass = float(CLIbrary.numIn({"request": "\n" + self.name + "'s mass"}))
