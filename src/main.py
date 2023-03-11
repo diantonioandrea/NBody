@@ -18,17 +18,18 @@ def executable(filePath):
     os.chmod(filePath, os.stat(filePath).st_mode | ((stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH) & ~get_umask()))
 # ---
 
+name = "NBody"
 version = "v1.1.0_dev"
 production = True
-if "NBody" not in "".join(sys.argv): # Local testing.
+if name not in "".join(sys.argv): # Local testing.
 	production = False
 
 system = platform.system()
 path = os.getenv("PATH")
 
-print("\n" + Back.MAGENTA + Fore.WHITE + " " + version + " " + Back.WHITE + Fore.MAGENTA + " NBody " + Style.RESET_ALL) if production else print("\n" + Back.WHITE + Fore.BLUE + " NBody " + Style.RESET_ALL)
+print("\n" + Back.MAGENTA + Fore.WHITE + " " + version + " " + Back.WHITE + Fore.MAGENTA + " " + name + " " + Style.RESET_ALL) if production else print("\n" + Back.WHITE + Fore.BLUE + " " + name + " " + Style.RESET_ALL)
 print("N bodies simulation utility written in Python and built with CLIbrary")
-print("Developed by " + Style.BRIGHT + Fore.RED + "Andrea Di Antonio" + Style.RESET_ALL + ", more on " + Style.BRIGHT + "https://github.com/diantonioandrea" + Style.RESET_ALL)
+print("Developed by " + Style.BRIGHT + Fore.RED + "Andrea Di Antonio" + Style.RESET_ALL + ", more on " + Style.BRIGHT + "https://github.com/diantonioandrea/" + name + Style.RESET_ALL)
 
 # PATHS
 
@@ -37,20 +38,20 @@ if production: # Production.
 	installPath = homePath
 	
 	if system == "Darwin":
-		installPath += "Library/NBody/"
+		installPath += "Library/" + name + "/"
 	
 	elif system == "Linux":
-		installPath += ".local/bin/NBody/"
+		installPath += ".local/bin/" + name + "/"
 
 	elif system == "Windows":
-		installPath += "AppData/Roaming/NBody/"
+		installPath += "AppData/Roaming/" + name + "/"
 
 else: # Testing.
 	installPath = str(os.getcwd()) + "/"
 
 dataPath = installPath + "data/"
 resourcesPath = installPath + "resources/"
-helpPath = resourcesPath + "NBodyHelp.json"
+helpPath = resourcesPath + name + "Help.json"
 
 # INSTALLATION
 
@@ -65,14 +66,14 @@ if "install" in sys.argv and production:
 			shutil.copy(currentPath + "resources/" + file, resourcesPath + file)
 
 		if system != "Windows":
-			shutil.copy(currentPath + "NBody", installPath + "NBody")
+			shutil.copy(currentPath + name, installPath + name)
 
 		else:
-			shutil.copy(currentPath + "NBody.exe", installPath + "NBody.exe")
+			shutil.copy(currentPath + name + ".exe", installPath + name + ".exe")
 
-		CLIbrary.output({"type": "verbose", "string": "NBODY INSTALLED SUCCESFULLY TO " + installPath, "before": "\n"})
+		CLIbrary.output({"type": "verbose", "string": name.upper() + " INSTALLED SUCCESFULLY TO " + installPath, "before": "\n"})
 
-		if "NBody" not in path:
+		if name not in path:
 			CLIbrary.output({"type": "warning", "string": "MAKE SURE TO ADD ITS INSTALLATION DIRECTORY TO PATH TO USE IT ANYWHERE", "after": "\n"})
 		
 		else:
@@ -91,7 +92,7 @@ if production:
 	updateFlag = False
 
 	try:
-		latestVersion = requests.get("https://github.com/diantonioandrea/NBody/releases/latest").url.split("/")[-1]
+		latestVersion = requests.get("https://github.com/diantonioandrea/" + name + "/releases/latest").url.split("/")[-1]
 
 		if  version < latestVersion or (latestVersion in version and "_dev" in version):
 			CLIbrary.output({"type": "verbose", "string": "UPDATE AVAILABLE: " + version + " \u2192 " + latestVersion, "before": "\n"})
@@ -102,8 +103,8 @@ if production:
 				if not os.path.exists(tempPath):
 					os.makedirs(tempPath)
 
-				filePath = tempPath + "NBody-SYSTEM.zip".replace("SYSTEM", system.lower())
-				url = "https://github.com/diantonioandrea/NBody/releases/download/" + latestVersion + "/NBody-SYSTEM.zip".replace("SYSTEM", system.lower())
+				filePath = tempPath + name + "-SYSTEM.zip".replace("SYSTEM", system.lower())
+				url = "https://github.com/diantonioandrea/" + name + "/releases/download/" + latestVersion + "/" + name + "-SYSTEM.zip".replace("SYSTEM", system.lower())
 
 				file = open(filePath, "wb")
 				file.write(requests.get(url).content)
@@ -116,12 +117,12 @@ if production:
 					shutil.copy(tempPath + "resources/" + file, resourcesPath + file)
 
 				if system != "Windows":
-					shutil.copy(tempPath + "NBody", installPath + "NBody")
-					executable(installPath + "NBody")
+					shutil.copy(tempPath + name, installPath + name)
+					executable(installPath + name)
 
 				else:
-					shutil.copy(tempPath + "NBody.exe", installPath + "NBody.exe")
-					executable(installPath + "NBody.exe")
+					shutil.copy(tempPath + name + ".exe", installPath + name + ".exe")
+					executable(installPath + name + ".exe")
 
 				updateFlag = True
 				shutil.rmtree(tempPath)
@@ -161,7 +162,7 @@ try:
 	
 except:
 	if production:
-		CLIbrary.output({"type": "error", "string": "DATA OR RESOURCES ERROR, TRY REINSTALLING NBODY", "after": "\n"})
+		CLIbrary.output({"type": "error", "string": "DATA OR RESOURCES ERROR, TRY REINSTALLING " + name.upper(), "after": "\n"})
 	
 	else:
 		CLIbrary.output({"type": "error", "string": "DATA OR RESOURCES ERROR", "before": "\n", "after": "\n"})
@@ -217,7 +218,7 @@ while True:
 print("Type \'help\' if needed\n")
 
 # Prompt.
-cmdHandler = {"request": "[" + str(user) + "@nbody]"}
+cmdHandler = {"request": "[" + str(user) + "@" + name + "]"}
 cmdHandler["style"] = Fore.YELLOW
 cmdHandler["helpPath"] = helpPath
 
