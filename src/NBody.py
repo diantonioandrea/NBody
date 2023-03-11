@@ -9,7 +9,7 @@ from datetime import datetime
 
 class user:
 	def __init__(self):
-		self.name = CLIbrary.strIn({"request": "\nUser", "space": False, "blockedAnswers": [""]})
+		self.name = CLIbrary.strIn({"request": "User", "space": False})
 
 		self.registrationDate = datetime.now()
 		self.lastLogin = self.registrationDate
@@ -45,7 +45,7 @@ def getPosition(position: numpy.array) -> list: # Needed due to Python's refere
 class body:
 	def __init__(self, others: list):
 		while True:
-			self.name = CLIbrary.strIn({"request": "Body's name", "space": False, "blockedAnswers": [""]})
+			self.name = CLIbrary.strIn({"request": "Body's name", "space": False})
 			self.name = self.name[0].upper() + self.name[1:]
 
 			if self.name not in [other.name for other in others]:
