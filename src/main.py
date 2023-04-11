@@ -19,7 +19,7 @@ def executable(filePath):
 # ---
 
 name = "NBody"
-version = "v1.1.0_dev"
+version = "v1.1.0"
 production = True
 if name not in "".join(sys.argv): # Local testing.
 	production = False
