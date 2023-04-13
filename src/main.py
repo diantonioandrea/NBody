@@ -1,4 +1,4 @@
-import CLIbrary, os, random, platform, sys, shutil, requests, zipfile
+import CLIbrary, os, random, platform, sys, shutil
 from colorama import Fore, Back, Style
 import NBody
 
@@ -19,7 +19,7 @@ def executable(filePath):
 # ---
 
 name = "NBody"
-version = "v1.1.0"
+version = "rolling"
 production = True
 if name not in "".join(sys.argv): # Local testing.
 	production = False
@@ -71,7 +71,7 @@ if "install" in sys.argv and production:
 		else:
 			shutil.copy(currentPath + name + ".exe", installPath + name + ".exe")
 
-		CLIbrary.output({"type": "verbose", "string": name.upper() + " INSTALLED SUCCESFULLY TO " + installPath, "before": "\n"})
+		CLIbrary.output({"type": "verbose", "string": name.upper() + " INSTALLED SUCCESFULLY TO " + installPath})
 
 		if name not in path:
 			CLIbrary.output({"type": "warning", "string": "MAKE SURE TO ADD ITS INSTALLATION DIRECTORY TO PATH TO USE IT ANYWHERE", "after": "\n"})
@@ -85,63 +85,6 @@ if "install" in sys.argv and production:
 
 	finally:
 		sys.exit(0)
-
-# UPDATE
-
-if production:
-	updateFlag = False
-
-	try:
-		latestVersion = requests.get("https://github.com/diantonioandrea/" + name + "/releases/latest").url.split("/")[-1]
-
-		if  version < latestVersion or (latestVersion in version and "_dev" in version):
-			CLIbrary.output({"type": "verbose", "string": "UPDATE AVAILABLE: " + version + " \u2192 " + latestVersion, "before": "\n"})
-
-			if CLIbrary.boolIn({"request": "Would you like to download the latest version?"}):
-				tempPath = installPath + "temp/"
-
-				if not os.path.exists(tempPath):
-					os.makedirs(tempPath)
-
-				filePath = tempPath + name + "-SYSTEM.zip".replace("SYSTEM", system.lower())
-				url = "https://github.com/diantonioandrea/" + name + "/releases/download/" + latestVersion + "/" + name + "-SYSTEM.zip".replace("SYSTEM", system.lower())
-
-				file = open(filePath, "wb")
-				file.write(requests.get(url).content)
-				file.close()
-
-				updatePackage = zipfile.ZipFile(filePath, "r")
-				updatePackage.extractall(tempPath)
-
-				for file in os.listdir(tempPath + "resources/"):
-					shutil.copy(tempPath + "resources/" + file, resourcesPath + file)
-
-				if system != "Windows":
-					shutil.copy(tempPath + name, installPath + name)
-					executable(installPath + name)
-
-				else:
-					shutil.copy(tempPath + name + ".exe", installPath + name + ".exe")
-					executable(installPath + name + ".exe")
-
-				updateFlag = True
-				shutil.rmtree(tempPath)
-				CLIbrary.output({"type": "verbose", "string": "UPDATED TO: " + latestVersion})
-			
-			else:
-				CLIbrary.output({"type": "verbose", "string": "UPDATE IGNORED"})
-
-	except(requests.exceptions.RequestException):
-		CLIbrary.output({"type": "error", "string": "COULDN'T CHECK FOR UPDATES", "before": "\n"})
-
-	except:
-		CLIbrary.output({"type": "error", "string": "UPDATE MAY HAVE FAILED", "before": "\n", "after": "\n"})
-		sys.exit(-1)
-
-	finally:
-		if updateFlag:
-			CLIbrary.output({"type": "verbose", "string": "THE PROGRAM HAS BEEN CLOSED TO COMPLETE THE UPDATE", "after": "\n"})
-			sys.exit(0)
 
 # CHECKS
 
