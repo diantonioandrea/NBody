@@ -1,5 +1,6 @@
-import CLIbrary, os, random, platform, sys, shutil
+import CLIbrary, os, random, platform, sys, shutil, requests
 from colorama import Fore, Back, Style
+from datetime import datetime
 import NBody
 
 CLIbrary.data.setting_fileExtension = ".nb"
@@ -19,7 +20,7 @@ def executable(filePath):
 # ---
 
 name = "NBody"
-version = "rolling"
+version = "static" # No plans on upgrading NBody.
 production = True
 if name not in "".join(sys.argv): # Local testing.
 	production = False
@@ -111,6 +112,22 @@ except:
 		CLIbrary.output({"type": "error", "string": "DATA OR RESOURCES ERROR", "before": "\n", "after": "\n"})
 
 	sys.exit(-1)
+
+# UPDATE NOTIFICATION
+
+if production: # Added even if NBody has been archived.
+	try:
+		commits = requests.get("https://api.github.com/repos/diantonioandrea/" + name + "/commits").json()
+		localVersion = datetime.fromtimestamp(os.path.getmtime(installPath + name + (".exe" if system == "Windows" else "")))
+		localVersion = localVersion.replace(tzinfo=datetime.now().astimezone().tzinfo)
+
+		changes = sum([localVersion < datetime.fromisoformat(commit["commit"]["author"]["date"]) for commit in commits])
+
+		if changes:
+			CLIbrary.output({"type": "verbose", "string": "{} NEW COMMIT(S), CHECK https://github.com/diantonioandrea/".format(changes) + name, "before": "\n"})
+
+	except:
+		pass
 
 # LOGIN OR REGISTER
 
