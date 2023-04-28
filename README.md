@@ -1,6 +1,8 @@
 # NBody
 
-N bodies simulation utility written in Python and built with [CLIbrary](https://github.com/diantonioandrea/CLIbrary).[^1]
+N bodies simulation utility written in Python and built with [CLIbrary](https://github.com/diantonioandrea/CLIbrary).[^1]  
+
+**NBody** is a Python-based command-line utility designed to simulate the interactions between multiple bodies in space. It uses basic physics algorithms to predict the motion of each body.
 
 [^1]: **NBody** has been archived and should serve just as a fun project and a [CLIbrary](https://github.com/diantonioandrea/CLIbrary) example.
 
